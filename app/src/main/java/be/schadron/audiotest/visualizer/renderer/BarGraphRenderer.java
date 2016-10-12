@@ -14,7 +14,7 @@ import be.schadron.audiotest.visualizer.AudioData;
 import be.schadron.audiotest.visualizer.FFTData;
 
 public class BarGraphRenderer extends Renderer {
-    private final static int HEIGHT_AMPLIFIER = 100;
+    private final static int HEIGHT_AMPLIFIER = 250;
 
     private int mDivisions;
     private Paint mPaint;
@@ -39,15 +39,15 @@ public class BarGraphRenderer extends Renderer {
 
     @Override
     public void onRender(Canvas canvas, FFTData data, Rect rect) {
-        for (int i = 0; i < mDivisions; i++) {
+        for (int i = 0; i < data.bytes.length / mDivisions; i++) {
 
             mFFTPoints[i * 4] = rect.width() * ( (data.bytes.length / mDivisions) * i) / data.bytes.length + mPaint.getStrokeWidth();
             mFFTPoints[i * 4 + 2] = rect.width() * ( (data.bytes.length / mDivisions) * i) / data.bytes.length + mPaint.getStrokeWidth();
 
-            byte rfk = data.bytes[2 * i];
-            byte ifk = data.bytes[2 * i + 1];
+            byte rfk = data.bytes[mDivisions * i];
+            byte ifk = data.bytes[mDivisions * i + 1];
 
-            float magnitude = (float) rfk * rfk + ifk * ifk;
+            float magnitude = (float) Math.sqrt(rfk * rfk + ifk * ifk);
             int dbValue = (int) (HEIGHT_AMPLIFIER * Math.log10(magnitude));
 
             mFFTPoints[i * 4 + 1] = rect.height();
